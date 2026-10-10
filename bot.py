@@ -28,11 +28,11 @@ def is_admin(update):
     return bool(update.effective_user and update.effective_user.id in admins)
 
 async def notice(app, text):
-    try: await app.bot.send_message(GROUP_ID, "🛡️ <b>WILD WHITE BULLFFALLO</b>\n" + text, parse_mode=ParseMode.HTML)
+    try: await app.bot.send_message(GROUP_ID, "🛡️ <b>WILD WHITE BULLFFALO</b>\n" + text, parse_mode=ParseMode.HTML)
     except Exception: log.exception("Admin notice failed")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.effective_message.reply_text("🐃 WILD WHITE BULLFFALLO — anti-raid, human verification, and Solana buy alerts.")
+    await update.effective_message.reply_text("🐃 WILD WHITE BULLFFALO — anti-raid, human verification, and Solana buy alerts.")
 
 async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not is_admin(update): return
@@ -126,7 +126,7 @@ async def callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         try:
             await context.bot.restrict_chat_member(GROUP_ID, uid, unrestricted)
             pending.pop(uid, None)
-            await q.edit_message_text("✅ Verified! Welcome to WILD WHITE BULLFFALLO.")
+            await q.edit_message_text("✅ Verified! Welcome to WILD WHITE BULLFFALO.")
         except Exception:
             log.exception("Failed to restore member permissions")
             await q.edit_message_text("Verification passed, but permissions could not be changed. Contact an admin.")
@@ -173,7 +173,7 @@ async def solana_watcher(app):
                     buyer = transfers[0].get("toUserAccount") or tx.get("feePayer") or "Unknown"
                     sig_url = "https://solscan.io/tx/" + sig
                     token_url = "https://solscan.io/token/" + MINT
-                    text = ("🐃 <b>WILD WHITE BULLFFALLO — NEW BUY</b>\n\n"
+                    text = ("🐃 <b>WILD WHITE BULLFFALO — NEW BUY</b>\n\n"
                             f"🪙 Token amount: <code>{amount:,.6f}</code>\n"
                             f"👛 Buyer: <code>{buyer}</code>\n"
                             f"🔎 <a href=\"{sig_url}\">View transaction</a> · <a href=\"{token_url}\">View token</a>\n"
@@ -209,7 +209,7 @@ def main():
     app.add_handler(ChatMemberHandler(member_update, ChatMemberHandler.CHAT_MEMBER))
     app.add_handler(CallbackQueryHandler(callback))
     app.add_handler(MessageHandler(filters.Chat(GROUP_ID) & ~filters.StatusUpdate.ALL, moderate))
-    log.info("Starting WILD WHITE BULLFFALLO")
+    log.info("Starting WILD WHITE BULLFFALO")
     app.run_polling(allowed_updates=Update.ALL_TYPES)
 
 if __name__ == "__main__": main()
