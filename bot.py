@@ -172,13 +172,24 @@ async def solana_watcher(app):
                     amount = sum(float(t.get("tokenAmount") or 0) for t in transfers)
                     buyer = transfers[0].get("toUserAccount") or tx.get("feePayer") or "Unknown"
                     sig_url = "https://solscan.io/tx/" + sig
-                    token_url = "https://solscan.io/token/" + MINT
-                    text = ("🐃 <b>WILD WHITE BULLFFALO — NEW BUY</b>\n\n"
-                            f"🪙 Token amount: <code>{amount:,.6f}</code>\n"
-                            f"👛 Buyer: <code>{buyer}</code>\n"
-                            f"🔎 <a href=\"{sig_url}\">View transaction</a> · <a href=\"{token_url}\">View token</a>\n"
-                            "<i>Detection depends on Helius swap parsing; verify coverage for Pump.fun and migrated DEX trades.</i>")
-                    await app.bot.send_message(GROUP_ID, text, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
+                    chart_url = "https://dexscreener.com/solana/" + MINT
+                    buy_url = "https://pump.fun/coin/" + MINT
+                    short_buyer = buyer if len(buyer) <= 12 else buyer[:5] + "..." + buyer[-4:]
+                    text = ("🟠 <b>NEW BUY · WILD WHITE BULLFFALO</b>\\n"
+                            "━━━━━━━━━━━━━━━━━━\\n"
+                            "🐃 <b>$BULLFFALO BUY</b> · <i>Solana</i>\\n\\n"
+                            f"🪙 <b>{amount:,.2f}</b> tokens\\n"
+                            f"👛 <code>{short_buyer}</code> · <a href=\\\"{sig_url}\\\">Tx</a>\\n"
+                            "🟢 <b>BUY DETECTED</b>\\n"
+                            "━━━━━━━━━━━━━━━━━━\\n"
+                            "<i>On-chain swap alert · amounts are token units</i>")
+                    keyboard = InlineKeyboardMarkup([[
+                        InlineKeyboardButton("📊 Chart", url=chart_url),
+                        InlineKeyboardButton("🟠 Buy", url=buy_url),
+                        InlineKeyboardButton("🔎 Transaction", url=sig_url)
+                    ]])
+                    await app.bot.send_message(GROUP_ID, text, parse_mode=ParseMode.HTML,
+                                               reply_markup=keyboard, disable_web_page_preview=True)
                 await asyncio.sleep(5)
             except asyncio.CancelledError: raise
             except Exception: log.exception("Helius poll failed"); await asyncio.sleep(10)
